@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace MvcCore
+namespace MvcCoreNuevo
 {
     public class Startup
     {
@@ -16,6 +16,7 @@ namespace MvcCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession();
             services.AddControllersWithViews();
         }
 
@@ -30,6 +31,7 @@ namespace MvcCore
             app.UseRouting();
 
             app.UseStaticFiles();
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

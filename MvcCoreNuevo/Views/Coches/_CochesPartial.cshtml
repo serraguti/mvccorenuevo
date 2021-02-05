@@ -1,0 +1,21 @@
+﻿@model List<Coche>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Velocidad Máxima</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Marca</td>
+                <td>@item.Modelo</td>
+                <td>@item.VelocidadMaxima</td>
+            </tr>
+        }
+    </tbody>
+</table>

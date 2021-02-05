@@ -1,5 +1,4 @@
-﻿
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -15,7 +14,6 @@
     <!-- Custom styles for this template -->
     <link href="~/css/jumbotron.css" rel="stylesheet" />
 </head>
-
 <body>
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -29,18 +27,14 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                </li>
+                <partial name="_PartialMenuUsuario"/>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ejemplos</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
                         <a class="dropdown-item"
-                           asp-controller="Home"
-                           asp-action="Index">Casa</a>
+                           asp-controller="Coches"
+                           asp-action="Index">Coches Ajax</a>
                     </div>
                 </li>
             </ul>
