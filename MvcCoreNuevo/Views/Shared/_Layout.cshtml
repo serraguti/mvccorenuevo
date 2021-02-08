@@ -35,8 +35,13 @@
                         <a class="dropdown-item"
                            asp-controller="Coches"
                            asp-action="Index">Coches Ajax</a>
+                        <a class="dropdown-item"
+                           asp-controller="Departamentos"
+                           asp-action="Index">Departamentos</a>
                     </div>
                 </li>
+
+                @await Component.InvokeAsync("MenuDepartamentos")
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">

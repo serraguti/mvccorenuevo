@@ -5,17 +5,30 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MvcCoreNuevo.Data;
+using MvcCoreNuevo.Repositories;
 
 namespace MvcCoreNuevo
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        private IConfiguration Configuration;
+        public Startup(IConfiguration configuration)
+        {
+            this.Configuration = configuration;
+        }
         public void ConfigureServices(IServiceCollection services)
         {
+            String sqlcnn =
+                this.Configuration.GetConnectionString("cadenasqllocal");
+            services.AddTransient<IRepositoryHospital
+                , RepositoryHospital>();
+            services.AddDbContext<HospitalContext>
+                (options => options.UseSqlServer(sqlcnn));
             services.AddSession();
             services.AddControllersWithViews();
         }
