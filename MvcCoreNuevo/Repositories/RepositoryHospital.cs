@@ -1,4 +1,6 @@
-﻿using MvcCoreNuevo.Data;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using MvcCoreNuevo.Data;
 using MvcCoreNuevo.Models;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,25 @@ using System.Threading.Tasks;
 //AS POSICION
 //, ISNULL(DEPT.DEPT_NO, 0) AS DEPT_NO
 //, DEPT.DNOMBRE, DEPT.LOC FROM DEPT
+//GO
+//---------------------------------------------------
+//PROCEDIMIENTO PAGINACION INDIVIDUAL
+//CREATE PROCEDURE PAGINARREGISTRODEPARTAMENTO
+//(@POSICION INT, @REGISTROS INT OUT)
+//AS
+//    SELECT @REGISTROS = COUNT(DEPT_NO) FROM VISTADEPT
+//	SELECT DEPT_NO, DNOMBRE, LOC FROM VISTADEPT
+//	WHERE POSICION = @POSICION
+//GO
+//----------------------------------------------------------
+//---------------PROCEDURE PAGINACION GRUPO DEPARTAMENTO-----------
+//CREATE PROCEDURE PAGINARGRUPODEPARTAMENTOS
+//(@POSICION INT, @REGISTROS INT OUT)
+//AS
+//    SELECT @REGISTROS = COUNT(DEPT_NO) FROM VISTADEPT
+//	SELECT DEPT_NO, DNOMBRE, LOC FROM VISTADEPT
+//	WHERE POSICION >= @POSICION AND
+//	POSICION < (@POSICION + 2)
 //GO
 #endregion
 
@@ -66,6 +87,42 @@ namespace MvcCoreNuevo.Repositories
                            && datos.Posicion < (posicion + 2)
                            select datos;
             return consulta.ToList();
+        }
+
+        public Departamento GetDepartamentoPosicion(int posicion
+            , ref int salida)
+        {
+            String sql = "PAGINARREGISTRODEPARTAMENTO @POSICION"
+                + ", @REGISTROS OUT";
+            SqlParameter pampos =
+                new SqlParameter("@POSICION", posicion);
+            SqlParameter pamreg =
+                new SqlParameter("@REGISTROS", -1);
+            pamreg.Direction = System.Data.ParameterDirection.Output;
+            Departamento departamento =
+this.context.Departamentos.FromSqlRaw<Departamento>(sql, pampos, pamreg)
+.AsEnumerable()
+.FirstOrDefault();
+            int numeroregistros = Convert.ToInt32(pamreg.Value);
+            salida = numeroregistros;
+            return departamento;
+        }
+
+        public List<Departamento> GetGrupoDepartamentosSQL
+            (int posicion, ref int numeroregistros)
+        {
+            String sql = "PAGINARGRUPODEPARTAMENTOS @POSICION"
+                + ", @REGISTROS OUT";
+            SqlParameter pamposicion =
+                new SqlParameter("@POSICION", posicion);
+            SqlParameter pamregistros =
+                new SqlParameter("@REGISTROS", -1);
+            pamregistros.Direction = System.Data.ParameterDirection.Output;
+            List<Departamento> departamentos =
+                this.context.Departamentos
+                .FromSqlRaw(sql, pamposicion, pamregistros).ToList();
+            numeroregistros = Convert.ToInt32(pamregistros.Value);
+            return departamentos;
         }
     }
 }

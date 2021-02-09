@@ -82,5 +82,48 @@ namespace MvcCoreNuevo.Controllers
                 this.repo.GetGrupoDepartamentos(posicion.Value);
             return View(departamentos);
         }
+
+        public IActionResult PaginarRegistroDepartamentoSQL
+            (int? posicion)
+        {
+            if (posicion == null)
+            {
+                posicion = 1;
+            }
+            int ultimo = 0;
+            Departamento departamento =
+                this.repo.GetDepartamentoPosicion(posicion.Value
+                , ref ultimo);
+            int siguiente = posicion.Value + 1;
+            int anterior = posicion.Value - 1;
+            if (siguiente > ultimo)
+            {
+                siguiente = ultimo;
+            }
+            if (anterior < 1)
+            {
+                anterior = 1;
+            }
+            ViewData["ULTIMO"] = ultimo;
+            ViewData["SIGUIENTE"] = siguiente;
+            ViewData["ANTERIOR"] = anterior;
+            ViewData["POSICION"] = posicion.Value;
+            return View(departamento);
+        }
+
+        public IActionResult PaginarGrupoDepartamentosSQL
+            (int? posicion)
+        {
+            if (posicion == null)
+            {
+                posicion = 1;
+            }
+            int numeroregistros = 0;
+            List<Departamento> departamentos =
+                this.repo.GetGrupoDepartamentosSQL(posicion.Value
+                , ref numeroregistros);
+            ViewData["NUMEROREGISTROS"] = numeroregistros;
+            return View(departamentos);
+        }
     }
 }
