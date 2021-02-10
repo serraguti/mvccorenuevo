@@ -1,0 +1,77 @@
+﻿@model IEnumerable<MvcCoreNuevo.Models.Trabajador>
+
+@{
+    ViewData["Title"] = "PaginarTrabajadores";
+}
+
+<h1>Paginar Trabajadores</h1>
+
+@{ 
+    int numeropagina = 1;
+    int registros = (int)ViewData["NUMEROREGISTROS"];
+}
+
+<ul class="list-group list-group-horizontal">
+    @for (int i = 1; i <= registros; i += 4)
+    {
+        if (ViewData["SALARIO"] == null)
+        {
+            <li class="list-group-item">
+                <a asp-controller="Trabajadores"
+                   asp-action="PaginarTrabajadores"
+                   asp-route-posicion="@i">
+                    @numeropagina
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="list-group-item">
+                <a asp-controller="Trabajadores"
+                   asp-action="PaginarTrabajadores"
+                   asp-route-posicion="@i"
+                   asp-route-salario="@ViewData["SALARIO"]">
+                    @numeropagina
+                </a>
+            </li>
+        }
+        numeropagina += 1;
+    }
+</ul>
+
+<form method="post">
+    <label>Introduzca salario: </label>
+    <input type="text" name="salario"
+           class="form-control" required/>
+    <button type="submit" class="btn btn-info">
+        Filtrar datos
+    </button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>APELLIDO</th>
+            <th>TRABAJO</th>
+            <th>SALARIO</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdTrabajador)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Trabajo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salario)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

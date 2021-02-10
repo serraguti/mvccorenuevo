@@ -23,5 +23,11 @@ namespace MvcCoreNuevo.Repositories
 
         List<Departamento> GetGrupoDepartamentosSQL
             (int posicion, ref int numeroregistros);
+
+        List<Trabajador> GetTrabajadores(int posicion
+            , ref int numerotrabajadores);
+
+        List<Trabajador> GetTrabajadores(int posicion
+            , ref int numerotrabajadores, int salario);
     }
 }

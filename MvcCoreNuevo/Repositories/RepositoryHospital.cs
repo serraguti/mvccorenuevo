@@ -44,6 +44,58 @@ using System.Threading.Tasks;
 //	WHERE POSICION >= @POSICION AND
 //	POSICION < (@POSICION + 2)
 //GO
+//-------------------------------------------------------------
+//---------------------PAGINACION TRABAJADORES------------------
+//CREATE PROCEDURE PAGINACIONTRABAJORES
+//(@POSICION INT, @REGISTROS INT OUT)
+//AS
+//    SELECT @REGISTROS = COUNT(IDEMPLEADO)
+//	FROM PAGINARTRABAJADORES
+//	SELECT * FROM PAGINARTRABAJADORES
+//	WHERE POSICION >= @POSICION AND 
+//	POSICION < (@POSICION + 4)
+//GO
+
+//CREATE VIEW PAGINARTRABAJADORES
+//AS
+//	SELECT ROW_NUMBER() OVER(ORDER BY APELLIDO)
+
+//    AS POSICION
+//    , TRABAJADORES.* FROM TRABAJADORES
+//GO
+
+//CREATE VIEW TRABAJADORES
+//AS
+//	SELECT ISNULL(EMP_NO, 0) AS IDEMPLEADO
+//    , APELLIDO, OFICIO AS TRABAJO, SALARIO
+//	FROM EMP
+//	UNION 
+//	SELECT DOCTOR_NO, APELLIDO, ESPECIALIDAD
+//    , SALARIO FROM DOCTOR
+//	UNION
+//	SELECT EMPLEADO_NO, APELLIDO, FUNCION
+//    , SALARIO FROM PLANTILLA
+//GO
+//-------------------------VERSION 2-------------
+//CREATE PROCEDURE PAGINACIONTRABAJORESSALARIO
+//(@POSICION INT
+//, @SALARIO INT
+//, @REGISTROS INT OUT)
+//AS
+//    SELECT @REGISTROS = COUNT(IDEMPLEADO)
+//	FROM TRABAJADORES
+//	WHERE SALARIO >= @SALARIO
+//	SELECT * FROM 
+//	(SELECT ROW_NUMBER() OVER(ORDER BY APELLIDO)
+
+//    AS POSICION, TRABAJADORES.*
+//	FROM TRABAJADORES
+//	WHERE SALARIO >= @SALARIO) CONSULTA
+//    WHERE
+//    (POSICION >= @POSICION AND
+
+//    POSICION<(@POSICION + 4))
+//GO
 #endregion
 
 namespace MvcCoreNuevo.Repositories
@@ -123,6 +175,45 @@ this.context.Departamentos.FromSqlRaw<Departamento>(sql, pampos, pamreg)
                 .FromSqlRaw(sql, pamposicion, pamregistros).ToList();
             numeroregistros = Convert.ToInt32(pamregistros.Value);
             return departamentos;
+        }
+
+        public List<Trabajador> GetTrabajadores(int posicion
+            , ref int numerotrabajadores)
+        {
+            String sql = "PAGINACIONTRABAJORES @POSICION"
+                + ", @REGISTROS OUT";
+            SqlParameter pamposicion =
+                new SqlParameter("@POSICION", posicion);
+            SqlParameter pamregistros =
+                new SqlParameter("@REGISTROS", -1);
+            pamregistros.Direction =
+                 System.Data.ParameterDirection.Output;
+            List<Trabajador> trabajadores =
+                this.context.Trabajadores.FromSqlRaw
+                (sql, pamposicion, pamregistros).ToList();
+            numerotrabajadores = Convert.ToInt32(pamregistros.Value);
+            return trabajadores;
+        }
+
+        public List<Trabajador> GetTrabajadores(int posicion
+            , ref int numerotrabajadores, int salario)
+        {
+            String sql = "PAGINACIONTRABAJORESSALARIO @POSICION"
+                + ", @SALARIO"
+                + ", @REGISTROS OUT";
+            SqlParameter pamposicion =
+                new SqlParameter("@POSICION", posicion);
+            SqlParameter pamsalario =
+                new SqlParameter("@SALARIO", salario);
+            SqlParameter pamregistros =
+                new SqlParameter("@REGISTROS", -1);
+            pamregistros.Direction =
+                 System.Data.ParameterDirection.Output;
+            List<Trabajador> trabajadores =
+                this.context.Trabajadores.FromSqlRaw
+                (sql, pamposicion, pamsalario, pamregistros).ToList();
+            numerotrabajadores = Convert.ToInt32(pamregistros.Value);
+            return trabajadores;
         }
     }
 }
